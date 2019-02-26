@@ -1,0 +1,63 @@
+{
+    "name": "MCCI Arduino LoRaWAN Library", 
+    "keywords": [
+        "ttn", 
+        "lora", 
+        "the things network"
+    ], 
+    "description": "High-level library for LoRaWAN-based Arduino end-devices", 
+    "repository": {
+        "type": "git", 
+        "url": "https://github.com/mcci-catena/arduino-lorawan"
+    }, 
+    "authors": [
+        {
+            "email": "tmm@mcci.com", 
+            "url": null, 
+            "maintainer": true, 
+            "name": "Terry Moore"
+        }, 
+        {
+            "email": null, 
+            "url": null, 
+            "maintainer": false, 
+            "name": "ChaeHee Won"
+        }
+    ], 
+    "dependencies": [
+        {
+            "name": "MCCI LoRaWAN LMIC library", 
+            "version": "https://github.com/mcci-catena/arduino-lmic.git", 
+            "authors": [
+                "Matthijs Kooijman <matthijs@stdin.nl>", 
+                "Terry Moore <tmm@mcci.com>"
+            ]
+        }, 
+        {
+            "name": "MCCI Arduino Development Kit ADK", 
+            "version": "https://github.com/mcci-catena/Catena-mcciadk.git", 
+            "authors": [
+                "Terry Moore <tmm@mcci.com>"
+            ]
+        }
+    ], 
+    "version": "0.5.3", 
+    "frameworks": [
+        "arduino"
+    ], 
+    "platforms": [
+        "atmelavr", 
+        "atmelsam", 
+        "espressif32", 
+        "espressif8266", 
+        "intel_arc32", 
+        "microchippic32", 
+        "nordicnrf51", 
+        "nordicnrf52", 
+        "ststm32", 
+        "ststm8", 
+        "teensy", 
+        "timsp430"
+    ], 
+    "id": 5718
+}
