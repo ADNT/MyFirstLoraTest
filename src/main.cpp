@@ -1,55 +1,49 @@
+#include <WiFi.h>
+#include <U8x8lib.h>
+#include <LoRa.h>
 
-#include <Arduino_LoRaWAN.h>
-#include <Arduino_LoRaWAN_ttn.h>
+// the OLED used
+U8X8_SSD1306_128X64_NONAME_SW_I2C u8x8(/* clock=*/ 15, /* data=*/ 4, /* reset=*/ 16);
 
-class cMyLoRaWAN : public Arduino_LoRaWAN_ttn {
-public:
-    cMyLoRaWAN() {};
+#define SS      18
+#define RST     14
+#define DI0     26
 
-protected:
-    // you'll need to provide implementations for each of the following.
-    virtual bool GetOtaaProvisioningInfo(Arduino_LoRaWAN::OtaaProvisioningInfo*) override;
-    virtual void NetSaveFCntUp(uint32_t uFCntUp) override;
-    virtual void NetSaveFCntDown(uint32_t uFCntDown) override;
-    virtual void NetSaveSessionInfo(const SessionInfo &Info, const uint8_t *pExtraInfo, size_t nExtraInfo) override;
-};
+void setup()
+{
+  // Set WiFi to station mode and disconnect from an AP if it was previously connected
+  WiFi.mode(WIFI_STA);
+  WiFi.disconnect();
 
-// set up the data structures.
-cMyLoRaWAN myLoRaWAN {};
+  delay(100);
 
-void setup() {
-    myLoRaWAN.begin();
+  u8x8.begin();
+  u8x8.setFont(u8x8_font_5x8_f);
+  SPI.begin(5, 19, 27, 18);
+  LoRa.setPins(SS, RST, DI0); 
+  if (!LoRa.begin(868E6)) {
+	  u8x8.drawString(0, 1, "Error with LoRa");
+    while (1);
+  }
+  u8x8.drawString(0, 1,   "LoRa Configured");
 }
 
-void loop() {
-    myLoRaWAN.loop();
+
+static void doSomeWork()
+{
+	const int n =  WiFi.scanNetworks();
+	for (int i = 0; i < n; ++i) {
+	  // Print SSID for each network found
+	  char currentSSID[64];
+	  WiFi.SSID(i).toCharArray(currentSSID, 64);
+	  u8x8.drawString(0, i + 1, currentSSID);
+	}
+  // Wait a bit before scanning again
+  delay(5000);
 }
 
-// this method is called when the LMIC needs OTAA info.
-// return false to indicate "no provisioning", otherwise
-// fill in the data and return true.
-bool
-cMyLoRaWAN::GetOtaaProvisioningInfo(
-    OtaaProvisioningInfo *pInfo
-    ) {
-    return false;
-}
 
-void
-cMyLoRaWAN::NetSaveFCntDown(uint32_t uFCntDown) {
-    // save uFcntDown somwwhere
-}
-
-void
-cMyLoRaWAN::NetSaveFCntUp(uint32_t uFCntUp) {
-    // save uFCntUp somewhere
-}
-
-void
-cMyLoRaWAN::NetSaveSessionInfo(
-    const SessionInfo &Info,
-    const uint8_t *pExtraInfo,
-    size_t nExtraInfo
-    ) {
-    // save Info somewhere.
+void loop()
+{
+  doSomeWork();
 }
