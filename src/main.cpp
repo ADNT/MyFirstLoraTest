@@ -4,6 +4,32 @@
 #include <hal/hal.h>
 #include <SPI.h>
 #include <U8x8lib.h>
+#include "config.h"
+#ifndef CONFIG_H_
+  #error please create config fileno_unlocked
+  /**
+   * exemple
+   * config.h
+   * // This EUI must be in little-endian format, so least-significant-byte
+   * // first. When copying an EUI from ttnctl output, this means to reverse
+   * // the bytes. For TTN issued EUIs the last bytes should be 0xD5, 0xB3, 0x70.
+   * static const u1_t PROGMEM APPEUI[8] = { 0xB3, 0xB3, 0xB3, 0xB3, 0xB3, 0xB3, 0xB3, 0x70 };
+   * 
+   * // This should also be in little endian format, see above.
+   * static const u1_t PROGMEM DEVEUI[8] = { 0x5E, 0xB3, 0xB3, 0xB3, 0xB3, 0xB3, 0xB3, 0xB3 };
+   * 
+   * // This key should be in big endian format (or, since it is not really a
+   * // number but a block of memory, endianness does not really apply). In
+   * // practice, a key taken from ttnctl can be copied as-is.
+   * 
+   * static const u1_t PROGMEM APPKEY[16] = { 0x48, 0x10, 0xB3, 0xB3, 0xB3, 0xB3, 0xB3, 0xCA, 0xB3, 0xB3, 0xB3, 0xB3, 0xB3, 0xB3, 0x62, 0x4A };
+   * 
+   */
+#endif
+
+#ifndef   CFG_eu868
+  #error Flag CFG_eu868 not define!!!!
+#endif
 
 
 typedef union {
@@ -17,27 +43,16 @@ float longitude;
 char s[16]; 
 
 // the OLED used
-U8X8_SSD1306_128X64_NONAME_HW_I2C u8x8(/* clock=*/ 15, /* data=*/ 4, /* reset=*/ 16);
+U8X8_SSD1306_128X64_NONAME_SW_I2C u8x8(/* clock=*/ 15, /* data=*/ 4, /* reset=*/ 16);
 
-// This EUI must be in little-endian format, so least-significant-byte
-// first. When copying an EUI from ttnctl output, this means to reverse
-// the bytes. For TTN issued EUIs the last bytes should be 0xD5, 0xB3, 0x70.
-static const u1_t PROGMEM APPEUI[8] = { 0x94, 0x6A, 0x01, 0xD0, 0x7E, 0xD5, 0xB3, 0x70 };
 void os_getArtEui (u1_t* buf) {
   memcpy_P(buf, APPEUI, 8);
 }
 
-// This should also be in little endian format, see above.
-static const u1_t PROGMEM DEVEUI[8] = { 0x5E, 0xD8, 0xE7, 0x11, 0xC2, 0x57, 0x54, 0x00 };
 void os_getDevEui (u1_t* buf) {
   memcpy_P(buf, DEVEUI, 8);
 }
 
-// This key should be in big endian format (or, since it is not really a
-// number but a block of memory, endianness does not really apply). In
-// practice, a key taken from ttnctl can be copied as-is.
-// 
-static const u1_t PROGMEM APPKEY[16] = { 0x4A, 0x62, 0x8E, 0x63, 0x71, 0x06, 0x1C, 0x96, 0xCA, 0xD3, 0x23, 0x50, 0xB7, 0xEC, 0x10, 0x48 };
 void os_getDevKey (u1_t* buf) {
   memcpy_P(buf, APPKEY, 16);
 }
@@ -200,7 +215,7 @@ void setup() {
   u8x8.begin();
   u8x8.setFont(u8x8_font_chroma48medium8_r);
   u8x8.drawString(0, 1, "Remon WebLoRa");
-  SPI.begin(5, 19, 27);
+  //SPI.begin(5, 19, 27);
   // LMIC init
   os_init();
   // Reset the MAC state. Session and pending data transfers will be discarded.
@@ -208,7 +223,7 @@ void setup() {
   // Start job (sending automatically starts OTAA too)
   do_send(&sendjob);
   pinMode(BUILTIN_LED, OUTPUT);
-  digitalWrite(BUILTIN_LED, LOW);
+  digitalWrite(BUILTIN_LED, HIGH);
 }
 
 void loop() {
