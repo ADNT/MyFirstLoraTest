@@ -4,9 +4,9 @@
 #include <hal/hal.h>
 #include <SPI.h>
 #include <U8x8lib.h>
-#include "config.h"
+//#include "config.h"
 #ifndef CONFIG_H_
-  #error please create config fileno_unlocked
+  #include <example_config.h>
   /**
    * exemple
    * config.h
