@@ -4,7 +4,10 @@
 #include <hal/hal.h>
 #include <SPI.h>
 #include <U8x8lib.h>
+#include <Wire.h>
+#include "si7020.h"
 #include "config.h"
+
 #ifndef CONFIG_H_
   #include <example_config.h>
   /**
@@ -32,7 +35,7 @@
 #endif
 
 
-const unsigned TX_INTERVAL = 30;
+const unsigned TX_INTERVAL = 10;
 
 const lmic_pinmap lmic_pins = {
   .nss = 18,
@@ -41,8 +44,11 @@ const lmic_pinmap lmic_pins = {
   .dio = {26, 33, 32},
 };
 
-U8X8_SSD1306_128X64_NONAME_SW_I2C u8x8(/* clock=*/ 15, /* data=*/ 4, /* reset=*/ 16);
+char temp[10];
+char hum[10];
 
+U8X8_SSD1306_128X64_NONAME_SW_I2C u8x8(/* clock=*/ 15, /* data=*/ 4, /* reset=*/ 16);
+Si7020 sensor;
 static osjob_t sendjob;
 
 void send_task(osjob_t* j) {
@@ -50,15 +56,22 @@ void send_task(osjob_t* j) {
     Serial.println(F("OP_TXRXPEND, not sending"));
     u8x8.drawString(0, 7, "OP_TXRXPEND, not sent");
   } else {
-    LMIC_setTxData2(1, (xref2u1_t)"HelloWorld", 11, 0);
-  
+    sprintf(temp, "temp : %.2f", sensor.getTemp());
+    u8x8.drawString(0, 2, temp);
+    Serial.println(F(temp));
+    sprintf(hum, "RH : %.2f", sensor.getRH());
+    u8x8.drawString(0, 3, hum);
+    Serial.println(F(hum));
+
+    LMIC_setTxData2(1, (xref2u1_t)temp, 10, 0);
+ 
     Serial.println(F("Packet queued"));
     u8x8.drawString(0, 7, "PACKET QUEUED");
     digitalWrite(BUILTIN_LED, HIGH);
   }
 }
 
-void onEvent (ev_t ev) {
+void onEvent (ev_t ev) {    
   switch (ev) {
     case EV_SCAN_TIMEOUT:
       Serial.println(F("EV_SCAN_TIMEOUT"));
@@ -162,11 +175,9 @@ void os_getDevKey (u1_t* buf) {
   memcpy_P(buf, APPKEY, 16);
 }
 
-
 void setup() {
-  
+  Wire.begin(21,22); 
   delay(100);
-
   u8x8.begin();
   u8x8.setFont(u8x8_font_5x8_f);
   u8x8.drawString(0, 1,   "LoRa Configured");
@@ -174,12 +185,13 @@ void setup() {
   Serial.begin(9600);
   u8x8.begin();
   u8x8.setFont(u8x8_font_chroma48medium8_r);
-  u8x8.drawString(0, 1, "ADNT FirstTest");
+  u8x8.drawString(0, 1, "ADNT RBR_CARD");
   os_init();
   LMIC_reset();
   send_task(&sendjob);
   pinMode(BUILTIN_LED, OUTPUT);
   digitalWrite(BUILTIN_LED, HIGH);
+
 }
 
 void loop() {

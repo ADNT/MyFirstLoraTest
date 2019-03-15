@@ -1,3 +1,7 @@
 {
-    "C_Cpp.intelliSenseEngineFallback": "Disabled"
+    "C_Cpp.intelliSenseEngineFallback": "Disabled",
+    "terminal.integrated.env.osx": {
+        "PATH": "/Users/Admin/.platformio/penv/bin:/Users/Admin/.platformio/penv:/Library/Frameworks/Python.framework/Versions/3.6/bin:/Library/Frameworks/Python.framework/Versions/3.6/bin:/Library/Frameworks/Python.framework/Versions/3.6/bin:/sw/bin:/sw/sbin:/Users/Admin/.sdkman/candidates/gradle/current/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/share/dotnet:/opt/X11/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/usr/local/git/bin:/Users/Admin/devtools/maven/bin:/Users/Admin/android-sdk-macosx/tools:/Users/Admin/android-sdk-macosx/platform-tools:/Users/Admin/android-sdk-macosx/platform-tools/ant",
+        "PLATFORMIO_CALLER": "vscode"
+    }
 }
